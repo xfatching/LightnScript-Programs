@@ -1,0 +1,194 @@
+<!-- View this site in FatChing LightnScript Program Player. -->
+<!-- You don't have LightnScript in your PC? Visit https://xfatching.pages.dev/lightnscript to download! -->
+
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="https://lightnscript.pages.dev/library/stylefiles/formkit.css">
+<link rel="stylesheet" type="text/css" href="https://lightnscript.pages.dev/library/stylefiles/innermenu.css">
+
+<style>
+body {
+  margin: 0px;
+  background: #c0c0c0;
+  color: #000000;
+  font-family: "PMingLiU", "MingLiU", "新細明體", serif;
+  font-size: 12pt;
+  background-image: url('http://ixiufui.pages.dev/fc-background2.png');
+  background-repeat: repeat;
+  /* background-attachment: fixed; */
+}
+
+.page {
+  width: auto;
+  background: #ffffff;
+  border: 1px solid #000000;
+}
+</style>
+</head>
+<body>
+
+<innermenu>
+    <menuitem href="javascript:void(function () { alert('Copyright(C) 2026 FatChing Studio') };)" name="About Calculator"></menuitem>
+</innermenu>
+
+<center>
+<table class="page" cellpadding="0" cellspacing="0" width="auto">
+<tr><td>
+<table border="1" style="border: 1px #606060;"><tr><td align="center">
+    <table>
+	<tr><td><p align="center"><input type="text" id="CalcDisplay" style="text-align: right;" readonly value="0"></p></td></tr>
+	<tr><td><p align="center"><button id="Btn1">&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;</button>&nbsp;<button id="Btn2">&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;</button>&nbsp;<button id="Btn3">&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;</button></p></td></tr>
+	<tr><td><p align="center"><button id="Btn4">&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;</button>&nbsp;<button id="Btn5">&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;</button>&nbsp;<button id="Btn6">&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;</button></p></td></tr>
+	<tr><td><p align="center"><button id="Btn7">&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;</button>&nbsp;<button id="Btn8">&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;</button>&nbsp;<button id="Btn9">&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;</button></p></td></tr>
+	<tr><td><p align="center"><button id="Btn0">&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;</button></p></td></tr>
+    </table>
+</td><td align="center">
+    <table>
+	<tr><td><p align="center"><button id="BtnM1">&nbsp;&nbsp;+&nbsp;&nbsp;</button></p></td></tr>
+	<tr><td></td></tr>
+	<tr><td></td></tr>
+	<tr><td></td></tr>
+	<tr><td><p align="center"><button id="BtnM2">&nbsp;&nbsp;-&nbsp;&nbsp;</button></p></td></tr>
+	<tr><td></td></tr>
+	<tr><td></td></tr>
+	<tr><td></td></tr>
+	<tr><td><p align="center"><button id="BtnM3">&nbsp;&nbsp;*&nbsp;&nbsp;</button></p></td></tr>
+	<tr><td></td></tr>
+	<tr><td></td></tr>
+	<tr><td></td></tr>
+	<tr><td><p align="center"><button id="BtnM4">&nbsp;&nbsp;/&nbsp;&nbsp;</button></p></td></tr>
+    </table>
+</td></tr><tr><td align="center" colspan="2">
+    <table width="100%">
+	<tr><td><p align="center"><button id="BtnBksp">&nbsp;&nbsp;&nbsp;&nbsp;&lt;x]&nbsp;&nbsp;&nbsp;&nbsp;</button>&nbsp;<button id="BtnM5">&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;</button>&nbsp;<button id="BtnAC">&nbsp;&nbsp;&nbsp;AC&nbsp;&nbsp;&nbsp;</button></p></td></tr>
+    </table>
+
+<script type="text/javascript">
+window.onload = function() {
+    var display = document.getElementById("CalcDisplay");
+    
+    var currentInput = "0";
+    var pendingOperator = null;
+    var firstOperand = null;
+    var shouldResetDisplay = false;
+
+    // 更新顯示內容
+    function updateDisplay() {
+        display.value = currentInput;
+    }
+
+    // 數字輸入處理 (0-9)
+    function handleNumber(numStr) {
+        if (currentInput === "0" || shouldResetDisplay) {
+            currentInput = numStr;
+            shouldResetDisplay = false;
+        } else {
+            currentInput += numStr;
+        }
+        updateDisplay();
+    }
+
+    // 運算子處理 (+, -, *, /)
+    function handleOperator(op) {
+        if (pendingOperator !== null && !shouldResetDisplay) {
+            calculate();
+        }
+        firstOperand = parseFloat(currentInput);
+        pendingOperator = op;
+        shouldResetDisplay = true;
+    }
+
+    // 計算 (=)
+    function calculate() {
+        if (pendingOperator === null || shouldResetDisplay) return;
+        
+        var secondOperand = parseFloat(currentInput);
+        var result = 0;
+
+        switch (pendingOperator) {
+            case '+':
+                result = firstOperand + secondOperand;
+                break;
+            case '-':
+                result = firstOperand - secondOperand;
+                break;
+            case '*':
+                result = firstOperand * secondOperand;
+                break;
+            case '/':
+                if (secondOperand === 0) {
+                    alert("錯誤：除數不能為零");
+                    handleAC();
+                    return;
+                }
+                result = firstOperand / secondOperand;
+                break;
+        }
+
+        currentInput = String(result);
+        pendingOperator = null;
+        firstOperand = null;
+        shouldResetDisplay = true;
+        updateDisplay();
+    }
+
+    // 全部清除 (AC)
+    function handleAC() {
+        currentInput = "0";
+        pendingOperator = null;
+        firstOperand = null;
+        shouldResetDisplay = false;
+        updateDisplay();
+    }
+
+    // 退格按鈕 (<x])
+    function handleBksp() {
+        if (shouldResetDisplay) return;
+        if (currentInput.length > 1) {
+            currentInput = currentInput.substring(0, currentInput.length - 1);
+        } else {
+            currentInput = "0";
+        }
+        updateDisplay();
+    }
+
+    // 跨瀏覽器事件綁定函數 (支援 IE 的 attachEvent 與標準 addEventListener)
+    function addClickEvent(elementId, handler) {
+        var el = document.getElementById(elementId);
+        if (!el) return;
+        if (el.addEventListener) {
+            el.addEventListener("click", handler, false);
+        } else if (el.attachEvent) {
+            el.attachEvent("onclick", handler);
+        }
+    }
+
+    // 綁定 0~9 按鈕
+    for (var i = 0; i <= 9; i++) {
+        (function(n) {
+            addClickEvent("Btn" + n, function() {
+                handleNumber(String(n));
+            });
+        })(i);
+    }
+
+    // 綁定運算子按鈕 (BtnM1 ~ BtnM4)
+    addClickEvent("BtnM1", function() { handleOperator('+'); });
+    addClickEvent("BtnM2", function() { handleOperator('-'); });
+    addClickEvent("BtnM3", function() { handleOperator('*'); });
+    addClickEvent("BtnM4", function() { handleOperator('/'); });
+
+    // 綁定其他功能鍵
+    addClickEvent("BtnM5", calculate);     // 等於 (=)
+    addClickEvent("BtnBksp", handleBksp);  // 退格 (<x])
+    addClickEvent("BtnAC", handleAC);      // 全部清除 (AC)
+};
+</script>
+</td></tr></table>
+</td></tr>
+</table>
+<table style="background-color: #00000000" valign="bottom">
+<tr><td class="copyright" align="center">&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>Copyright (C) 2026 FatChing Studio, all rights reserved.</td></tr></table>
+</center>
+</body>
+</html>
